@@ -1,7 +1,6 @@
 package model.entities;
 
-import model.entities.exceptions.BalanceError;
-import model.entities.exceptions.WithdrawLimit;
+import model.exceptions.BusinessException;
 
 public class Account {
     private Integer number;
@@ -9,9 +8,7 @@ public class Account {
     private Double balance;
     private Double withdrawLimit;
 
-    public Account(Integer number, String holder, Double balance, Double withdrawLimit) {
-
-        this.number = number;
+    public Account(Integer number, String holder, Double balance, Double withdrawLimit) {        this.number = number;
         this.holder = holder;
         this.balance = balance;
         this.withdrawLimit = withdrawLimit;
@@ -50,15 +47,18 @@ public class Account {
         balance += amount;
     }
 
-    public void withdraw(Double amount) throws BalanceError, WithdrawLimit {
-        if (amount > withdrawLimit) {
-            throw new WithdrawLimit("Withdraw error: The amount exceeds withdraw limit");
-        }
-        else if (balance <= 0 || amount > balance) {
-            throw new BalanceError("Withdraw error: Not enough balance");
-        }
-
+    public void withdraw(Double amount){
+        validateWithdraw(amount);
         balance -= amount;
+    }
+
+    public void validateWithdraw(double amount) {
+        if (amount > withdrawLimit) {
+            throw new BusinessException("Withdraw error: The amount exceeds withdraw limit");
+        }
+        if (balance <= 0 || amount > balance) {
+            throw new BusinessException("Withdraw error: Not enough balance");
+        }
     }
 
     @Override

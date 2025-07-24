@@ -1,18 +1,15 @@
 package application;
 
 import model.entities.Account;
-import model.entities.exceptions.BalanceError;
-import model.entities.exceptions.WithdrawLimit;
+import model.exceptions.BusinessException;
 
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Program {
-    public static void main(String[] args) throws BalanceError, WithdrawLimit {
+    public static void main(String[] args){
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
-
-        try {
             System.out.println("Enter account data");
             System.out.println("Number:");
             int number = sc.nextInt();
@@ -27,16 +24,14 @@ public class Program {
             System.out.println("Enter amount for withdraw:");
             double amountWithdraw = sc.nextDouble();
             Account account = new Account(number, holder, initialBalance, withdrawLimit);
+        try {
             account.withdraw(amountWithdraw);
             System.out.println("New balance: " + String.format("%.2f", account.getBalance()));
         }
-        catch (BalanceError e ) {
+        catch (BusinessException e) {
             System.out.println(e.getMessage());
         }
-
-        catch (WithdrawLimit e ) {
-            System.out.println(e.getMessage());
-        }
+        sc.close();
 
     }
 }
